@@ -270,6 +270,26 @@ with detection_graph.as_default():
 #      plt.imshow(image_np)
       #cv2.imshow('IPWebcam',image_np)
       cv2.imshow('image',cv2.resize(image_np,(1024,768)))
+      
+      if cv2.waitKey(25) & 0xFF == ord('s'):
+            
+            if scores[0][0] > 0.5: 
+                class_id = int(classes[0][0])
+                object_name = category_index[class_id]['name']
+                top_box = boxes[0][0]
+                apx_distance_top = round(((1 - (top_box[3] - top_box[1]))**4), 1)
+                
+                # Generate the voice feedback
+                alert_text = f"The most prominent object is a {object_name}, at approximately {apx_distance_top} units distance."
+                print(alert_text) # Also print to console for debugging
+                engine.say(alert_text)
+                engine.runAndWait()
+
+            else:
+                alert_text = "No prominent objects detected."
+                print(alert_text)
+                engine.say(alert_text)
+                engine.runAndWait()
       if cv2.waitKey(2) & 0xFF == ord('t'):
           cv2.destroyAllWindows()
           cap.release()
